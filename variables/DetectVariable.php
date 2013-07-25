@@ -5,6 +5,6 @@ class DetectVariable
 {
     public function display()
     {
-        return implode(' ', craft()->detect->process());
+        return strtolower(implode(' ', craft()->detect->process()));
     }
 }
