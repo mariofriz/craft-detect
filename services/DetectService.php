@@ -44,6 +44,10 @@ class DetectService extends BaseApplicationComponent
         if (isset($info['browser']))
         {
             $browser = $info['browser']['id'];
+            if ($browser == 'IE' && isset($info['browser']['version']))
+            {
+                $browser .= round($info['browser']['version']);
+            }
             $classes[] = $browser;
         }
 
