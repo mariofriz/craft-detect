@@ -1,0 +1,24 @@
+#!/bin/sh
+
+getVersion()
+{
+    PLUGIN_PATH="../"
+    PLUGIN_FILE=`find $PLUGIN_PATH -name "*Plugin.php"`
+
+    VER_TOCKEN="[[:digit:]]\.[[:digit:]]\+\.[[:digit:]]\+"
+
+    VER_STR=$(grep $VER_TOCKEN $PLUGIN_FILE | awk '{print $2}')
+    echo $VER_STR | sed s/\'// | sed s/\'\;//
+}
+
+getName()
+{
+    DIR=`pwd`
+    PARENT=`dirname $DIR`
+    echo `basename $PARENT`
+}
+
+case "$1" in
+    version) getVersion;;
+    name) getName;;
+esac

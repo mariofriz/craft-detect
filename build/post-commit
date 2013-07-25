@@ -1,0 +1,55 @@
+#!/bin/sh
+
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+PLUGIN_PATH=`git rev-parse --show-toplevel`"/"
+PLUGIN_FILE=`find $PLUGIN_PATH -name "*Plugin.php"`
+
+VER_TOCKEN="[[:digit:]]\.[[:digit:]]\+\.[[:digit:]]\+"
+VER_PREVIOUS=`grep $VER_TOCKEN $PLUGIN_FILE`
+
+VER_STR=$(grep $VER_TOCKEN $PLUGIN_FILE | awk '{print $2}')
+VER_UNFORMATTED=`echo $VER_STR | sed s/\'// | sed s/\'\;//`
+
+VER_MAJ=$(echo $VER_UNFORMATTED | awk -F. '{print $1}')
+VER_MIN=$(echo $VER_UNFORMATTED | awk -F. '{print $2}')
+VER_PATCH=$(echo $VER_UNFORMATTED | awk -F. '{print $3}')
+
+applyVersion()
+{
+  VER_STR="'"$VER_MAJ"."$VER_MIN"."$VER_PATCH"';"
+  VER_LINE="        return "$VER_STR
+  VER_UNFORMATTED=`echo $VER_STR | sed s/\'// | sed s/\'\;//`
+  sed -i 's/^'"$VER_PREVIOUS"'.*/'"$VER_LINE"'/' $PLUGIN_FILE
+  git add $PLUGIN_FILE
+  git commit -m "Version update: "$VER_UNFORMATTED
+}
+
+onVMAJ()
+{
+  let VER_MAJ++
+  VER_MIN=0
+  VER_PAT=0
+  applyVersion
+}
+
+onVMIN()
+{
+  let VER_MIN++
+  VER_PAT=0
+  applyVersion
+}
+
+onVPAT()
+{
+  let VER_PATCH++
+  applyVersion
+}
+
+case "$MESSAGE" in
+  *#maj* ) onVMAJ;;
+  *#min* ) onVMIN;;
+  *#patch* ) onVPAT;;
+  * );;
+esac
+
+exit

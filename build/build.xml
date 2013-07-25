@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="quickstart" default="build">
+
+    <target name="build">
+        
+        <exec command="sh getInfo name" dir="." outputProperty="project.name" />
+        <exec command="sh getInfo version" dir="." outputProperty="project.version" />
+
+        <echo msg="Preparing release ${project.version}..." />
+        <delete file="../../${project.name}-${project.version}.zip" verbose="true" failonerror="false" />
+        <zip destfile="../../${project.name}-${project.version}.zip" includeemptydirs="false">
+            <fileset dir="../../">
+                <include name="${project.name}/" />
+                <exclude name="${project.name}/build/" />
+            </fileset>
+        </zip>
+
+        <echo msg="Release ${phing.project.name}-${project.version}.zip has been created!" />
+    </target>
+
+</project>
