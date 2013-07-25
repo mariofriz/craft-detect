@@ -11,7 +11,7 @@ class DetectPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.9.1';
+        return '0.9.2';
     }
 
     function getDeveloper()
